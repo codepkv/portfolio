@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { FaCode, FaRocket, FaBriefcase, FaStar } from "react-icons/fa";
 import { useInView } from "react-intersection-observer";
 
@@ -34,11 +33,10 @@ const timeline = [
 ];
 
 const TimelinePage = () => {
-  const [navbarHeight, setNavbarHeight] = useState(80); // Default height estimate
-  const [activeItem, setActiveItem] = useState(null);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [navbarHeight, setNavbarHeight] = useState(80);
+  const [activeItem, setActiveItem] = useState<number | null>(null);
 
-  // Detect navbar height on mount and resize
+  // Detect navbar height on mount
   useEffect(() => {
     const updateNavHeight = () => {
       const navbar = document.querySelector("nav") || document.querySelector("header");
@@ -46,23 +44,9 @@ const TimelinePage = () => {
         setNavbarHeight(navbar.offsetHeight);
       }
     };
-
-    // Run once on mount
     updateNavHeight();
-
-    // Set up resize listener
     window.addEventListener("resize", updateNavHeight);
     return () => window.removeEventListener("resize", updateNavHeight);
-  }, []);
-
-  // Mouse follower effect
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // Animation for section entrance
@@ -78,137 +62,82 @@ const TimelinePage = () => {
     }
   }, [controls, inView]);
 
-  // Background animation variants
-  const backgroundVariants = {
-    animate: {
-      backgroundPosition: ["0% 0%", "100% 100%"],
-      transition: {
-        duration: 20,
-        ease: "linear",
-        repeat: Infinity,
-        repeatType: "reverse"
-      }
-    }
-  };
-
   return (
     <section 
-      className="relative w-full min-h-screen flex items-center justify-center bg-transparent overflow-hidden"
+      className="relative w-full min-h-screen flex items-center justify-center overflow-hidden"
       style={{ paddingTop: `${navbarHeight + 20}px`, paddingBottom: "3rem" }}
       ref={ref}
     >
-      {/* Dynamic background elements */}
+      {/* Simplified background gradient */}
+      <div className="absolute inset-0  z-0" />
+      
+      {/* Subtle accent gradients */}
       <motion.div 
-        className="absolute inset-0 opacity-20 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2 }}
-        transition={{ duration: 1.5 }}
-      >
-        <motion.div 
-          className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-orange-500 blur-3xl"
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 40, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-1/3 right-1/4 w-64 h-64 rounded-full bg-yellow-300 blur-3xl"
-          animate={{
-            x: [0, 40, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-      </motion.div>
-
-      {/* Mouse follower glow */}
-      <motion.div
-        className="hidden lg:block fixed w-60 h-60 rounded-full bg-orange-500/20 blur-3xl pointer-events-none z-0"
+        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full  blur-3xl"
         animate={{
-          x: cursorPosition.x - 120,
-          y: cursorPosition.y - 120,
+          x: [0, -20, 0],
+          y: [0, 20, 0],
         }}
         transition={{
-          type: "spring",
-          damping: 15,
-          stiffness: 100,
-          mass: 0.8
+          duration: 15,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
+      
+      <motion.div 
+        className="absolute bottom-1/3 right-1/4 w-64 h-64 rounded-full bg-purple-500/20 blur-3xl"
+        animate={{
+          x: [0, 20, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          repeatType: "reverse"
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col items-center z-10">
-        {/* Animated title */}
+      <div className="max-w-6xl mx-auto px-4 flex flex-col items-center z-10">
+        {/* Simplified animated title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full text-center mb-16"
+          transition={{ duration: 0.8 }}
+          className="w-full text-center mb-12"
         >
-          <motion.div 
-            className="inline-block"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.span 
-              className="inline-block bg-gradient-to-r from-orange-400 to-yellow-300 text-transparent bg-clip-text text-xl font-medium mb-2"
-              variants={backgroundVariants}
-              animate="animate"
-            >
-              MY STORY
-            </motion.span>
-          </motion.div>
+          <span className="inline-block text-blue-400 font-medium mb-2">
+            MY STORY
+          </span>
           
           <motion.h2 
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white"
+            className="text-4xl lg:text-5xl font-bold text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            My <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">Journey</span>
+            My <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Journey</span>
           </motion.h2>
           
           <motion.div 
-            className="w-20 h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full mx-auto mt-4"
+            className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
             initial={{ width: 0 }}
-            animate={{ width: 80 }}
+            animate={{ width: 64 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           />
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 w-full">
-          {/* Left Side - Image with interactive animations */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
+          {/* Left Side - Simplified image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={controls}
             variants={{
-              visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
               hidden: { opacity: 0, x: -50 }
             }}
-            className="w-full lg:w-1/2 flex justify-center relative order-2 lg:order-1"
+            className="w-full lg:w-2/5 flex justify-center relative order-2 lg:order-1"
           >
-            <motion.div
-              className="absolute -z-10 inset-0 bg-gradient-to-br from-orange-500/30 to-yellow-400/20 rounded-full blur-3xl opacity-70"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.4, 0.6, 0.4]
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            />
-            
             <motion.div
               animate={{
                 y: [0, -10, 0],
@@ -217,63 +146,47 @@ const TimelinePage = () => {
                 duration: 6,
                 repeat: Infinity,
                 repeatType: "reverse",
-                ease: "easeInOut"
               }}
-              className="relative w-[70%] sm:w-[50%] lg:w-[85%] max-w-lg"
-              whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+              className="relative w-4/5 max-w-md"
             >
               <img
                 src="https://res.cloudinary.com/du5hd5zaq/image/upload/v1743667499/pankaj2-removebg-preview_mu4xcw.png"
                 alt="Pankaj"
-                className="w-full drop-shadow-2xl"
+                className="w-full drop-shadow-xl"
               />
               
-              {/* Decorative elements */}
+              {/* Single decorative element */}
               <motion.div 
-                className="absolute top-10 -left-12 w-24 h-24 rounded-full border border-orange-500/30 flex items-center justify-center"
+                className="absolute top-8 -left-8 w-20 h-20 rounded-full border border-purple-500/30 flex items-center justify-center"
                 animate={{
                   rotate: 360,
-                  scale: [1, 1.1, 1]
                 }}
                 transition={{
-                  rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 5, repeat: Infinity, repeatType: "reverse" }
-                }}
-              >
-                <div className="w-16 h-16 rounded-full border border-yellow-400/40" />
-              </motion.div>
-              
-              <motion.div 
-                className="absolute bottom-10 -right-8 w-16 h-16 rounded-full bg-orange-500/10 backdrop-blur-sm flex items-center justify-center"
-                animate={{
-                  rotate: -360,
-                }}
-                transition={{
-                  duration: 15,
+                  duration: 20,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               >
-                <FaCode className="text-orange-400" size={24} />
+                <div className="w-12 h-12 rounded-full border border-blue-400/40" />
               </motion.div>
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Timeline */}
+          {/* Right Side - Simplified Timeline */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={controls}
             variants={{
-              visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut", delay: 0.3 } },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.3 } },
               hidden: { opacity: 0, x: 50 }
             }}
-            className="w-full lg:w-1/2 flex flex-col gap-8 order-1 lg:order-2"
+            className="w-full lg:w-3/5 flex flex-col gap-8 order-1 lg:order-2"
           >            
-            <div className="relative border-l-4 border-orange-400/70 pl-6 sm:pl-8 space-y-12">
+            <div className="relative border-l-2 border-blue-500 pl-6 space-y-8">
               {timeline.map((item, index) => {
                 const [itemRef, itemInView] = useInView({
                   threshold: 0.2,
-                  triggerOnce: false,
+                  triggerOnce: true,
                 });
 
                 return (
@@ -286,97 +199,49 @@ const TimelinePage = () => {
                       visible: { 
                         opacity: 1, 
                         y: 0,
-                        transition: { 
-                          duration: 0.7, 
-                          ease: "easeOut", 
-                          delay: index * 0.15 
-                        }
+                        transition: { duration: 0.7, delay: index * 0.15 }
                       },
                       hidden: { opacity: 0, y: 30 }
                     }}
                     className="relative"
                     onMouseEnter={() => setActiveItem(index)}
                     onMouseLeave={() => setActiveItem(null)}
-                    whileHover={{ scale: 1.02 }}
                   >
-                    {/* Timeline connecting line highlight effect */}
-                    {itemInView && (
-                      <motion.div 
-                        className="absolute left-[-28px] top-0 bottom-0 w-4 bg-orange-400/60"
-                        initial={{ height: 0 }}
-                        animate={{ height: "100%" }}
-                        transition={{ duration: 0.7, delay: index * 0.15 }}
-                      />
-                    )}
-                    
-                    {/* Timeline Dot with pulsing effect */}
+                    {/* Timeline Dot */}
                     <motion.div 
-                      className="absolute left-[-42px] sm:left-[-40px] top-2 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-yellow-400 rounded-full flex items-center justify-center text-white shadow-lg z-10"
-                      initial={{ scale: 0.9, opacity: 0.8 }}
-                      animate={itemInView ? { 
-                        scale: activeItem === index ? 1.2 : [1, 1.1, 1],
-                        opacity: 1,
-                        boxShadow: [
-                          "0 0 0 0 rgba(249, 115, 22, 0.7)",
-                          "0 0 0 10px rgba(249, 115, 22, 0)",
-                          "0 0 0 0 rgba(249, 115, 22, 0)"
-                        ]
+                      className="absolute left-[-34px] top-2 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white shadow-lg"
+                      animate={activeItem === index ? { 
+                        scale: 1.1,
+                        boxShadow: "0 0 15px rgba(96, 165, 250, 0.6)"
                       } : {}}
-                      transition={{
-                        duration: 2,
-                        ease: "easeInOut",
-                        times: [0, 0.5, 1],
-                        repeat: Infinity,
-                        repeatDelay: activeItem === index ? 0.5 : 3
-                      }}
                     >
                       {item.icon}
                     </motion.div>
                     
-                    {/* Content with hover effect */}
+                    {/* Content */}
                     <motion.div
-                      whileHover={{ 
-                        x: 5,
-                        boxShadow: "0 10px 30px -10px rgba(249, 115, 22, 0.3)"
-                      }}
+                      whileHover={{ x: 5 }}
                       animate={activeItem === index ? {
                         x: 5,
-                        backgroundColor: "rgba(31, 41, 55, 0.7)"
-                      } : {
-                        x: 0,
-                        backgroundColor: "rgba(17, 24, 39, 0.5)"
-                      }}
-                      className="bg-gray-900/50 backdrop-blur-sm p-5 sm:p-6 rounded-lg border border-orange-500/10 hover:border-orange-500/40 transition-all duration-300"
+                        backgroundColor: "rgba(15, 23, 42, 0.8)"
+                      } : {}}
+                      className="bg-slate-800/80 p-5 rounded-lg border border-slate-700 hover:border-blue-500/40 transition-all duration-300"
                     >
                       <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <motion.span 
-                          className="bg-gradient-to-r from-orange-500 to-yellow-400 text-white text-sm font-bold px-3 py-1 rounded-full shadow-md"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
+                        <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-bold px-3 py-1 rounded-full">
                           {item.year}
-                        </motion.span>
-                        <motion.h3 
-                          className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-                          animate={activeItem === index ? {
-                            backgroundImage: "linear-gradient(to right, #f97316, #facc15)"
-                          } : {
-                            backgroundImage: "linear-gradient(to right, #ffffff, #d1d5db)"
-                          }}
-                        >
+                        </span>
+                        <h3 className="text-xl font-bold text-white">
                           {item.title}
-                        </motion.h3>
+                        </h3>
                       </div>
-                      <motion.p 
-                        className="text-gray-300 text-base sm:text-lg"
-                        animate={activeItem === index ? { opacity: 1 } : { opacity: 0.9 }}
-                      >
+                      <p className="text-gray-300">
                         {item.description}
-                      </motion.p>
+                      </p>
                       
-                      {/* Animated line at the bottom */}
+                      {/* Animated indicator line */}
                       <motion.div 
-                        className="w-0 h-0.5 bg-gradient-to-r from-orange-500 to-transparent mt-4 rounded-full"
+                        className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-transparent mt-4 rounded-full"
                         animate={activeItem === index ? { width: "100%" } : { width: "0%" }}
                         transition={{ duration: 0.4 }}
                       />
@@ -386,7 +251,7 @@ const TimelinePage = () => {
               })}
             </div>
             
-            {/* Call to action at the end of timeline */}
+            {/* Call to action */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={controls}
@@ -394,12 +259,12 @@ const TimelinePage = () => {
                 visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.9 } },
                 hidden: { opacity: 0, y: 20 }
               }}
-              className="mt-8 flex justify-center lg:justify-start"
+              className="mt-6 flex justify-center lg:justify-start"
             >
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(249, 115, 22, 1)" }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-yellow-400 text-white font-semibold shadow-lg transition duration-300"
+                className="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium shadow-lg"
               >
                 See My Work
               </motion.button>

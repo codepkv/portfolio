@@ -25,7 +25,7 @@ const Hero = () => {
   // Text animation variants
   const textVariants = {
     hidden: { opacity: 0 },
-    visible: (i) => ({
+    visible: (i: number) => ({
       opacity: 1,
       transition: {
         delay: i * 0.3,
